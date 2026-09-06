@@ -266,6 +266,24 @@ body {
   font-size: 0.95rem;
 }
 
+.query-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.query-details-toggle {
+  white-space: nowrap;
+}
+
+.query-details-toggle[aria-checked="true"] {
+  border-color: var(--primary-color);
+  color: var(--primary-hover);
+  background-color: #eff6ff;
+}
+
 /* Search Bar */
 .search-bar {
   display: flex;
@@ -295,10 +313,12 @@ body {
 
 .search-panel {
   flex: 1;
+  min-width: 0;
 }
 
 .search-bar input {
   flex: 1;
+  min-width: 0;
   padding: 0.8rem 1rem;
   border: 1px solid var(--border-color);
   border-radius: 8px;

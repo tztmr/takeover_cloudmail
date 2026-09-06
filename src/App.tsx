@@ -11,6 +11,7 @@ const STORAGE_KEYS = {
   configs: "cloudmail.api.configs",
   activeConfigId: "cloudmail.api.activeConfigId",
   configPanelCollapsed: "cloudmail.api.configPanelCollapsed",
+  showQueryDetails: "cloudmail.query.showDetails",
 };
 
 function createConfigId() {
@@ -156,6 +157,9 @@ function App() {
     loadInitialConfigPanelCollapsed(),
   );
   const [activeTab, setActiveTab] = useState<"fetch" | "add">("fetch");
+  const [showQueryDetails, setShowQueryDetails] = useState(
+    () => localStorage.getItem(STORAGE_KEYS.showQueryDetails) !== "false",
+  );
   const emailInputRef = useRef<HTMLInputElement | null>(null);
   const configImportInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -164,6 +168,10 @@ function App() {
   const [emails, setEmails] = useState<Email[]>([]);
   const [fetchStatus, setFetchStatus] = useState("");
   const [isLoadingFetch, setIsLoadingFetch] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.showQueryDetails, String(showQueryDetails));
+  }, [showQueryDetails]);
 
   // Add User State
   const [accountCount, setAccountCount] = useState<number>(10);
@@ -740,9 +748,21 @@ function App() {
         <div className="tab-content">
           {activeTab === "fetch" && (
             <div className="card fade-in">
-              <div className="card-header">
-                <h2>查询收件箱</h2>
-                <p className="subtitle">输入邮箱地址查看最新邮件</p>
+              <div className="card-header query-card-header">
+                <div>
+                  <h2>查询收件箱</h2>
+                  <p className="subtitle">输入邮箱地址查看最新邮件</p>
+                </div>
+                <button
+                  type="button"
+                  className="secondary-btn query-details-toggle"
+                  role="switch"
+                  aria-label="二维码与提示"
+                  aria-checked={showQueryDetails}
+                  onClick={() => setShowQueryDetails((visible) => !visible)}
+                >
+                  二维码与提示：{showQueryDetails ? "开" : "关"}
+                </button>
               </div>
               <div className="search-container">
                 <div className="search-panel">
@@ -764,14 +784,14 @@ function App() {
                       {isLoadingFetch ? "查询中..." : "查询"}
                     </button>
                   </div>
-                  {fetchStatus && (
+                  {showQueryDetails && fetchStatus && (
                     <div className={`status-msg ${fetchStatus.includes("错误") ? "error" : "info"}`}>
                       {fetchStatus}
                     </div>
                   )}
                 </div>
 
-                {toEmail && (
+                {showQueryDetails && toEmail && (
                   <div className="qrcode-wrapper">
                     <QRCodeSVG value={toEmail} size={100} level="M" />
                   </div>
